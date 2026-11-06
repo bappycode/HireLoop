@@ -7,9 +7,6 @@ const db = client.db('hireloop');
 
 export const auth = betterAuth({
     baseUrl: process.env.BETTER_AUTH_URL as string,
-  database: mongodbAdapter(db, {
-    client,
-  }),
   emailAndPassword: { 
     enabled: true, 
   }, 
@@ -23,4 +20,7 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string, 
     }, 
   }, 
+  database: mongodbAdapter(db, {
+    client,
+  }),
 });
