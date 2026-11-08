@@ -15,10 +15,9 @@ export default function SigninPage() {
     })
     if(data){
       console.log("Sign in successful:", data);
-      
+          router.push("/"); 
     }
     if(error){
-      router.push("/");
       console.error("Sign in error:", error);
     }
     

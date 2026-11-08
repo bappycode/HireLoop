@@ -16,6 +16,12 @@ const roles = [
     description: "Discover talent and hire great people.",
     icon: "💼",
   },
+  {
+    id: "admin",
+    title: "Admin",
+    description: "Admin will handle the Admin Previlages",
+    icon: "🛡️",
+  },
 ] as const;
 
 export default function SignupPage() {
@@ -24,12 +30,14 @@ export default function SignupPage() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const Fdata = Object.fromEntries(formData.entries());
-    const {data, error} = await authClient.signUp.email({
+    console.log("Form data:", Fdata);
+    const signUpData = {
       name: Fdata.name as string,
       email: Fdata.email as string,
       password: Fdata.password as string,
-      role: Fdata.role as string,
-    })
+      role: Fdata.role as "seeker" | "recruiter" | "admin",
+    };
+    const {data, error} = await authClient.signUp.email(signUpData)
     if(data){
       console.log("Sign up successful:", data);
       router.push("/signin");
@@ -64,7 +72,7 @@ export default function SignupPage() {
                 I want to join as a
               </legend>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 {roles.map((role, index) => (
                   <label key={role.id} className="cursor-pointer">
                     <input
