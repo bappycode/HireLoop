@@ -1,7 +1,8 @@
 import Link from "next/link"
 import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { getJobs, type JobDoc } from "@/lib/jobs"
+import { getJobs } from "@/lib/jobs-server"
+import type { JobDoc } from "@/lib/jobs"
 import { requireRole } from "@/lib/session"
 import { JobsTable } from "./_components/jobs-table"
 

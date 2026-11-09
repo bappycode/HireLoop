@@ -15,19 +15,6 @@ export type JobDoc = {
   createdAt?: string
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:5000"
-
-export async function getJobs(): Promise<JobDoc[]> {
-  const response = await fetch(`${baseUrl}/jobs`, { cache: "no-store" })
-
-  if (!response.ok) {
-    throw new Error(`Could not load job posts (HTTP ${response.status}).`)
-  }
-
-  const data = await response.json()
-  return Array.isArray(data) ? (data as JobDoc[]) : []
-}
-
 const FREQUENCY_SUFFIX: Record<string, string> = {
   "per hour": "/hr",
   "per day": "/day",
@@ -114,4 +101,21 @@ export function formatLocation(job: JobDoc) {
 
   if (!place) return job.remoteAllowed ? "Remote" : "—"
   return job.remoteAllowed ? `Remote - ${place}` : place
+}
+
+/** Rough monthly equivalent so jobs with different pay frequencies can be compared. */
+export function monthlySalary(job: JobDoc): number | null {
+  const min = toAmount(job.minSalary)
+  if (min === null) return null
+
+  switch (job.salaryFrequency) {
+    case "per hour":
+      return min * 160
+    case "per day":
+      return min * 20
+    case "per year":
+      return Math.round(min / 12)
+    default:
+      return min
+  }
 }
