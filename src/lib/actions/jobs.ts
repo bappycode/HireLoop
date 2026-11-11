@@ -1,3 +1,4 @@
+import { apiUrl } from "@/lib/api"
 import type { JobDoc, JobStatus } from "@/lib/jobs"
 
 export type JobPayload = {
@@ -17,14 +18,12 @@ export type JobPayload = {
   status: JobStatus
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:5000"
-
 async function jobRequest<T>(
   path: string,
   action: "create" | "delete",
   init?: RequestInit
 ): Promise<T> {
-  const response = await fetch(`${baseUrl}${path}`, init)
+  const response = await fetch(apiUrl(path), init)
 
   if (!response.ok) {
     const body = await response.text().catch(() => "")

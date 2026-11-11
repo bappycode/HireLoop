@@ -1,9 +1,13 @@
+import { apiUrl } from "./api"
+import { jobFilterParams, type JobFilters } from "./job-filters"
 import type { JobDoc } from "./jobs"
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:5000"
-
-export async function getJobs(): Promise<JobDoc[]> {
-  const response = await fetch(`${baseUrl}/jobs`, { cache: "no-store" })
+export async function getJobs(filters?: JobFilters): Promise<JobDoc[]> {
+  const query = filters ? jobFilterParams(filters).toString() : ""
+  const response = await fetch(
+    apiUrl(`/jobs${query ? `?${query}` : ""}`),
+    { cache: "no-store" }
+  )
 
   if (!response.ok) {
     throw new Error(`Could not load job posts (HTTP ${response.status}).`)
@@ -14,7 +18,7 @@ export async function getJobs(): Promise<JobDoc[]> {
 }
 
 export async function getJob(id: string): Promise<JobDoc | null> {
-  const response = await fetch(`${baseUrl}/jobs/${id}`, { cache: "no-store" })
+  const response = await fetch(apiUrl(`/jobs/${id}`), { cache: "no-store" })
 
   if (response.status === 404) return null
 

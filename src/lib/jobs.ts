@@ -118,19 +118,3 @@ export function formatLocation(job: JobDoc) {
   return job.remoteAllowed ? `Remote - ${place}` : place
 }
 
-/** Rough monthly equivalent so jobs with different pay frequencies can be compared. */
-export function monthlySalary(job: JobDoc): number | null {
-  const min = toAmount(job.minSalary)
-  if (min === null) return null
-
-  switch (job.salaryFrequency) {
-    case "per hour":
-      return min * 160
-    case "per day":
-      return min * 20
-    case "per year":
-      return Math.round(min / 12)
-    default:
-      return min
-  }
-}

@@ -10,24 +10,12 @@ import {
   MapPin,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { JOB_CATEGORIES, JOB_TYPES } from "@/lib/job-filters"
 import { createJob, type JobPayload } from "@/lib/actions/jobs"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
-const jobTypes = ["Full-time", "Part-time", "Contract", "Internship"] as const
-
-const jobCategories = [
-  "Engineering & Tech",
-  "Design",
-  "Product",
-  "Marketing",
-  "Sales",
-  "Finance",
-  "Operations",
-  "Human Resources",
-]
 
 const salaryFrequencies = ["per hour", "per day", "per month", "per year"]
 
@@ -209,7 +197,7 @@ export function AddJobForm() {
               <option value="" disabled className="bg-[#141418]">
                 Select category
               </option>
-              {jobCategories.map((category) => (
+              {JOB_CATEGORIES.map((category) => (
                 <option key={category} value={category} className="bg-[#141418]">
                   {category}
                 </option>
@@ -220,7 +208,7 @@ export function AddJobForm() {
 
         <Field label="Job Type" required>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {jobTypes.map((type, index) => (
+            {JOB_TYPES.map((type, index) => (
               <div key={type}>
                 <input
                   type="radio"
