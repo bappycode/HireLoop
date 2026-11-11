@@ -21,8 +21,6 @@ export type NavItem = {
   exact?: boolean
 }
 
-export const roles: Role[] = ["seeker", "recruiter", "admin"]
-
 export const roleLabels: Record<Role, string> = {
   seeker: "Job Seeker",
   recruiter: "Recruiter",
@@ -38,6 +36,11 @@ export const dashboardHome: Record<Role, string> = {
 
 export function isRole(value: unknown): value is Role {
   return value === "seeker" || value === "recruiter" || value === "admin"
+}
+
+/** Narrows an unknown role value to a known role (falls back to "seeker"). */
+export function resolveRole(role: unknown): Role {
+  return isRole(role) ? role : "seeker"
 }
 
 /**

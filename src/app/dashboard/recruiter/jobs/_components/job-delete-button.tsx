@@ -44,7 +44,6 @@ export function JobDeleteButton({
       setOpen(false)
       router.refresh()
     } catch (err) {
-      console.error("Delete job failed:", err)
       setError(
         err instanceof Error ? err.message : "Could not delete this job."
       )

@@ -12,10 +12,10 @@ import Footer from "@/components/footer"
 import Navbar from "@/components/navbar"
 import { Badge } from "@/components/ui/badge"
 import {
-  compensationParts,
+  formatCompensation,
   formatDeadline,
   formatLocation,
-  isExpired,
+  isJobClosed,
   type JobDoc,
 } from "@/lib/jobs"
 import { getJob } from "@/lib/jobs-server"
@@ -48,9 +48,8 @@ export default async function JobDetailsPage({
 
   if (!job) notFound()
 
-  const { amount, suffix } = compensationParts(job)
-  const salary = suffix ? `${amount} ${suffix}` : amount
-  const expired = isExpired(job)
+  const salary = formatCompensation(job)
+  const closed = isJobClosed(job)
 
   return (
     <div className="min-h-screen bg-[#050508] text-white">
@@ -77,7 +76,7 @@ export default async function JobDetailsPage({
               </p>
             </div>
 
-            {expired ? (
+            {closed ? (
               <Badge
                 variant="outline"
                 className="h-6 rounded-full border-rose-400/30 bg-rose-500/10 px-3 text-[11px] text-rose-300"
@@ -148,7 +147,7 @@ export default async function JobDetailsPage({
                 />
               </dl>
 
-              {expired ? (
+              {closed ? (
                 <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-center text-[13px] text-white/45">
                   Applications are closed
                 </div>

@@ -2,7 +2,8 @@ import type { Metadata } from "next"
 import { cookies } from "next/headers"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { requireUser, resolveRole } from "@/lib/session"
+import { resolveRole } from "@/lib/dashboard-nav"
+import { requireUser } from "@/lib/session"
 import { AppSidebar } from "./_components/app-sidebar"
 import { DashboardHeader } from "./_components/dashboard-header"
 
@@ -28,7 +29,6 @@ export default async function DashboardLayout({
           <AppSidebar
             user={{
               name: session.user.name,
-              email: session.user.email,
               role,
             }}
           />

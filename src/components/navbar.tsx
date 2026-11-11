@@ -1,22 +1,30 @@
 'use client';
+
 import Image from "next/image";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { dashboardHome, isRole } from "@/lib/dashboard-nav";
 import { Button } from "./ui/button";
 
-const navLinks = [
+const publicNavLinks = [
   { label: "Browse Jobs", href: "/jobs" },
   { label: "Company", href: "/companies" },
   { label: "Pricing", href: "/pricing" },
 ];
 
 export default function Navbar() {
-  const {data: session, 
-        isPending} = authClient.useSession();
+  const { data: session } = authClient.useSession();
   const user = session?.user;
+
+  const navLinks =
+    user && isRole(user.role)
+      ? [...publicNavLinks, { label: "Dashboard", href: dashboardHome[user.role] }]
+      : publicNavLinks;
+
   const onSignOut = async () => {
     await authClient.signOut();
   };
+
   return (
     <header className="sticky top-0 z-50 w-full px-4 pt-4 sm:px-6">
       <nav

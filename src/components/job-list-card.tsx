@@ -1,15 +1,12 @@
 import Link from "next/link"
 import { ArrowUpRight, Briefcase, Building2, Clock, MapPin } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { compensationParts, formatLocation, type JobDoc } from "@/lib/jobs"
+import { formatCompensation, formatLocation, type JobDoc } from "@/lib/jobs"
 
 const badgeClass =
   "h-6 gap-1.5 rounded-full border-white/10 bg-white/[0.03] px-2.5 text-[11px] font-normal text-white/60"
 
 export function JobListCard({ job }: { job: JobDoc }) {
-  const { amount, suffix } = compensationParts(job)
-  const salary = suffix ? `${amount} ${suffix}` : amount
-
   return (
     <Link
       href={`/jobs/${job._id}`}
@@ -39,7 +36,7 @@ export function JobListCard({ job }: { job: JobDoc }) {
         </Badge>
         <Badge variant="outline" className={badgeClass}>
           <Clock className="size-3 text-white/40" />
-          {salary}
+          {formatCompensation(job)}
         </Badge>
       </div>
 

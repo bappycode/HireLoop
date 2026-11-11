@@ -12,6 +12,7 @@ import {
   type NavItem,
   type Role,
 } from "@/lib/dashboard-nav"
+import { getInitials } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -31,7 +32,6 @@ import {
 type AppSidebarProps = {
   user: {
     name: string
-    email: string
     role: Role
   }
 }
@@ -39,16 +39,6 @@ type AppSidebarProps = {
 function isActive(pathname: string, item: NavItem) {
   if (item.exact) return pathname === item.url
   return pathname === item.url || pathname.startsWith(`${item.url}/`)
-}
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase()
 }
 
 export function AppSidebar({ user }: AppSidebarProps) {
@@ -95,7 +85,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
         <div className="flex items-center gap-2 rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-2 group-data-[collapsible=icon]:hidden">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold">
-            {initials(user.name)}
+            {getInitials(user.name)}
           </div>
           <div className="grid min-w-0 flex-1 leading-tight">
             <span className="truncate text-sm font-semibold">{user.name}</span>

@@ -10,7 +10,7 @@ import {
   MapPin,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { createJob } from "@/lib/actions/jobs"
+import { createJob, type JobPayload } from "@/lib/actions/jobs"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,6 +30,9 @@ const jobCategories = [
 ]
 
 const salaryFrequencies = ["per hour", "per day", "per month", "per year"]
+
+const textareaClass =
+  "w-full resize-y rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
 
 function Field({
   label,
@@ -96,16 +99,16 @@ function Select({
 }
 
 export function AddJobForm() {
-  const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">(
-    "idle"
-  )
+  const [submitState, setSubmitState] = useState<
+    "idle" | "saving" | "success" | "error"
+  >("idle")
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const formData = new FormData(event.currentTarget)
-    const data = {
+    const data: JobPayload = {
       jobTitle: String(formData.get("jobTitle") ?? ""),
       companyName: String(formData.get("companyName") ?? ""),
       jobCategory: String(formData.get("jobCategory") ?? ""),
@@ -118,23 +121,21 @@ export function AddJobForm() {
       salaryFrequency: String(formData.get("salaryFrequency") ?? ""),
       keyResponsibilities: String(formData.get("keyResponsibilities") ?? ""),
       qualifications: String(formData.get("qualifications") ?? ""),
+      applicant: 0,
+      status: "active",
     }
 
-    console.log("New job form data:", data)
-
-    setStatus("saving")
+    setSubmitState("saving")
     setErrorMessage(null)
 
     try {
-      const created = await createJob(data)
-      console.log("Job created:", created)
-      setStatus("success")
+      await createJob(data)
+      setSubmitState("success")
     } catch (error) {
-      console.error("Create job failed:", error)
       setErrorMessage(
         error instanceof Error ? error.message : "Something went wrong"
       )
-      setStatus("error")
+      setSubmitState("error")
     }
   }
 
@@ -162,17 +163,17 @@ export function AddJobForm() {
             type="submit"
             size="lg"
             className="gap-2"
-            disabled={status === "saving"}
+            disabled={submitState === "saving"}
           >
-            {status === "saving" ? "Publishing..." : "Publish Job"}
+            {submitState === "saving" ? "Publishing..." : "Publish Job"}
             <ArrowRight />
           </Button>
-          {status === "success" ? (
+          {submitState === "success" ? (
             <p className="text-xs text-emerald-400">
               Job published successfully.
             </p>
           ) : null}
-          {status === "error" ? (
+          {submitState === "error" ? (
             <p className="max-w-xs text-right text-xs text-destructive">
               {errorMessage}
             </p>
@@ -347,7 +348,7 @@ export function AddJobForm() {
             name="keyResponsibilities"
             rows={4}
             placeholder="Share your commitment to delivering exceptional user interfaces and digital experiences. You will collaborate directly with systems designers and backend engineers to craft responsive, micro-interaction rich products."
-            className="w-full resize-y rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+            className={textareaClass}
           />
         </Field>
 
@@ -356,7 +357,7 @@ export function AddJobForm() {
             name="qualifications"
             rows={4}
             placeholder="• 3+ years of experience with React, TypeScript, and modern state architectures&#10;• Solid understanding of REST and GraphQL APIs and component-driven design&#10;• Experience partnering closely with product teams and UI/UX designers"
-            className="w-full resize-y rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+            className={textareaClass}
           />
         </Field>
       </Section>

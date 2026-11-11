@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import SectionHeading from "@/components/section-heading";
-import { compensationParts, type JobDoc } from "@/lib/jobs";
+import { formatCompensation, formatLocation, type JobDoc } from "@/lib/jobs";
 import { getJobs } from "@/lib/jobs-server";
 import { cn } from "cn";
 
@@ -63,9 +63,6 @@ export default async function JobDiscovery() {
         ) : (
           <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {featured.map((job) => {
-              const { amount, suffix } = compensationParts(job);
-              const salary = suffix ? `${amount} ${suffix}` : amount;
-
               return (
                 <Card
                   key={job._id}
@@ -86,7 +83,7 @@ export default async function JobDiscovery() {
                       className="h-6 gap-1.5 rounded-full border-white/10 bg-white/[0.03] px-2.5 text-[11px] font-normal text-white/60"
                     >
                       <MapPin className="size-3 text-white/40" />
-                      {job.jobLocation || "Remote"}
+                      {formatLocation(job)}
                     </Badge>
                     <Badge
                       variant="outline"
@@ -100,7 +97,7 @@ export default async function JobDiscovery() {
                       className="h-6 gap-1.5 rounded-full border-white/10 bg-white/[0.03] px-2.5 text-[11px] font-normal text-white/60"
                     >
                       <Clock className="size-3 text-white/40" />
-                      {salary}
+                      {formatCompensation(job)}
                     </Badge>
                   </CardContent>
 

@@ -2,32 +2,21 @@
 
 import { usePathname } from "next/navigation"
 import { Bell, CircleHelp, Mail, Search } from "lucide-react"
-import { dashboardNav, roleMeta, type Role } from "@/lib/dashboard-nav"
+import { dashboardNav, roleMeta, type NavItem, type Role } from "@/lib/dashboard-nav"
+import { getInitials } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
-const allItems = Object.values(dashboardNav).flat()
-
-function titleFor(pathname: string) {
-  const match = allItems
+function titleFor(pathname: string, items: NavItem[]) {
+  const match = items
     .filter(
       (item) => pathname === item.url || pathname.startsWith(`${item.url}/`)
     )
     .sort((a, b) => b.url.length - a.url.length)[0]
 
   return match?.title ?? "Dashboard"
-}
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase()
 }
 
 export function DashboardHeader({ role, name }: { role: Role; name: string }) {
@@ -38,7 +27,9 @@ export function DashboardHeader({ role, name }: { role: Role; name: string }) {
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mx-1 h-4" />
-      <h1 className="hidden text-sm font-medium md:block">{titleFor(pathname)}</h1>
+      <h1 className="hidden text-sm font-medium md:block">
+        {titleFor(pathname, dashboardNav[role])}
+      </h1>
 
       {meta.searchPlaceholder ? (
         <div className="relative ml-1 w-full max-w-xs">
@@ -75,7 +66,7 @@ export function DashboardHeader({ role, name }: { role: Role; name: string }) {
         ) : null}
 
         <div className="ml-1 flex size-8 items-center justify-center rounded-full bg-muted text-xs font-semibold">
-          {initials(name)}
+          {getInitials(name)}
         </div>
       </div>
     </header>

@@ -1,3 +1,5 @@
+export type JobStatus = "active" | "closed"
+
 export type JobDoc = {
   _id: string
   jobTitle: string
@@ -12,6 +14,8 @@ export type JobDoc = {
   salaryFrequency?: string
   keyResponsibilities?: string
   qualifications?: string
+  applicant?: number
+  status?: JobStatus
   createdAt?: string
 }
 
@@ -50,6 +54,12 @@ export function compensationParts(job: JobDoc) {
   return { amount: `€${compactAmount((min ?? max) as number)}`, suffix }
 }
 
+/** "€80k - €120k /yr" */
+export function formatCompensation(job: JobDoc) {
+  const { amount, suffix } = compensationParts(job)
+  return suffix ? `${amount} ${suffix}` : amount
+}
+
 export function formatDeadline(value?: string) {
   if (!value) return "—"
 
@@ -72,6 +82,11 @@ export function isExpired(job: JobDoc) {
 
   date.setHours(23, 59, 59, 999)
   return date.getTime() < Date.now()
+}
+
+/** A job is closed once it is explicitly closed or its deadline has passed. */
+export function isJobClosed(job: JobDoc) {
+  return job.status === "closed" || isExpired(job)
 }
 
 export function formatUpdated(createdAt?: string) {

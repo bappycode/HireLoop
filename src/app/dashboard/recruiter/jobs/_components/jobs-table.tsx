@@ -5,7 +5,6 @@ import {
   Code2,
   MapPin,
   Megaphone,
-  MoreVertical,
   Pencil,
   PenTool,
   Plus,
@@ -22,7 +21,7 @@ import {
   formatDeadline,
   formatLocation,
   formatUpdated,
-  isExpired,
+  isJobClosed,
   type JobDoc,
 } from "@/lib/jobs"
 import { JobDeleteButton } from "./job-delete-button"
@@ -95,7 +94,8 @@ export function JobsTable({ jobs }: { jobs: JobDoc[] }) {
             {jobs.map((job) => {
               const style = categoryStyles[job.jobCategory ?? ""] ?? fallbackStyle
               const Icon = style.icon
-              const expired = isExpired(job)
+              const closed = isJobClosed(job)
+              const applicants = job.applicant ?? 0
               const compensation = compensationParts(job)
               const updated = formatUpdated(job.createdAt)
 
@@ -155,7 +155,8 @@ export function JobsTable({ jobs }: { jobs: JobDoc[] }) {
 
                   <td className="px-4 py-4">
                     <span className="flex items-center gap-1.5 text-xs whitespace-nowrap text-muted-foreground">
-                      <Users className="size-3.5" />0 Candidates
+                      <Users className="size-3.5" />
+                      {applicants} {applicants === 1 ? "Candidate" : "Candidates"}
                     </span>
                   </td>
 
@@ -163,7 +164,7 @@ export function JobsTable({ jobs }: { jobs: JobDoc[] }) {
                     <span
                       className={cn(
                         "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap",
-                        expired
+                        closed
                           ? "bg-rose-500/10 text-rose-400"
                           : "bg-emerald-500/10 text-emerald-400"
                       )}
@@ -171,10 +172,10 @@ export function JobsTable({ jobs }: { jobs: JobDoc[] }) {
                       <span
                         className={cn(
                           "size-1.5 rounded-full",
-                          expired ? "bg-rose-400" : "bg-emerald-400"
+                          closed ? "bg-rose-400" : "bg-emerald-400"
                         )}
                       />
-                      {expired ? "Expired" : "Active"}
+                      {closed ? "Closed" : "Active"}
                     </span>
                   </td>
 
@@ -183,7 +184,7 @@ export function JobsTable({ jobs }: { jobs: JobDoc[] }) {
                       {formatDeadline(job.applicationDeadline)}
                     </span>
                     <span className="block text-xs whitespace-nowrap text-muted-foreground">
-                      {expired ? "Closed" : (updated ?? "—")}
+                      {updated ?? "—"}
                     </span>
                   </td>
 
@@ -203,15 +204,6 @@ export function JobsTable({ jobs }: { jobs: JobDoc[] }) {
                         Update
                       </Button>
                       <JobDeleteButton id={job._id} title={job.jobTitle} />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon-xs"
-                        aria-label={`More actions for ${job.jobTitle}`}
-                        className="text-muted-foreground"
-                      >
-                        <MoreVertical />
-                      </Button>
                     </div>
                   </td>
                 </tr>

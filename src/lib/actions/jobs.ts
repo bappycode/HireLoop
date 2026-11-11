@@ -1,3 +1,5 @@
+import type { JobDoc, JobStatus } from "@/lib/jobs"
+
 export type JobPayload = {
   jobTitle: string
   companyName: string
@@ -11,38 +13,37 @@ export type JobPayload = {
   salaryFrequency: string
   keyResponsibilities: string
   qualifications: string
+  applicant: number
+  status: JobStatus
 }
-
-export type CreatedJob = JobPayload & { _id: string; createdAt: string }
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:5000"
 
-export async function createJob(data: JobPayload): Promise<CreatedJob> {
-  const response = await fetch(`${baseUrl}/jobs`, {
+async function jobRequest<T>(
+  path: string,
+  action: "create" | "delete",
+  init?: RequestInit
+): Promise<T> {
+  const response = await fetch(`${baseUrl}${path}`, init)
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => "")
+    throw new Error(body || `Failed to ${action} job (HTTP ${response.status})`)
+  }
+
+  return response.json()
+}
+
+export function createJob(data: JobPayload): Promise<JobDoc> {
+  return jobRequest<JobDoc>("/jobs", "create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   })
-
-  if (!response.ok) {
-    const body = await response.text().catch(() => "")
-    throw new Error(body || `Failed to create job (HTTP ${response.status})`)
-  }
-
-  return response.json()
 }
 
-export async function deleteJob(id: string): Promise<{ deleted: boolean; _id: string }> {
-  const response = await fetch(`${baseUrl}/jobs/${id}`, {
-    method: "DELETE",
-  })
-
-  if (!response.ok) {
-    const body = await response.text().catch(() => "")
-    throw new Error(body || `Failed to delete job (HTTP ${response.status})`)
-  }
-
-  return response.json()
+export function deleteJob(id: string): Promise<{ deleted: boolean; _id: string }> {
+  return jobRequest(`/jobs/${id}`, "delete", { method: "DELETE" })
 }

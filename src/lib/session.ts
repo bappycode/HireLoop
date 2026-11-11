@@ -2,7 +2,7 @@ import { cache } from "react"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
-import { dashboardHome, isRole, type Role } from "@/lib/dashboard-nav"
+import { dashboardHome, resolveRole, type Role } from "@/lib/dashboard-nav"
 
 /**
  * Reads the Better Auth session for the current request.
@@ -19,11 +19,6 @@ export async function requireUser() {
     redirect("/signin")
   }
   return session
-}
-
-/** Narrows an unknown role value to a known role (falls back to "seeker"). */
-export function resolveRole(role: unknown): Role {
-  return isRole(role) ? role : "seeker"
 }
 
 /** Ensures the signed-in user owns `role`, otherwise sends them to their own dashboard. */
