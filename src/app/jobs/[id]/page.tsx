@@ -19,6 +19,7 @@ import {
   type JobDoc,
 } from "@/lib/jobs"
 import { getJob } from "@/lib/jobs-server"
+import ApplyButton from "@/components/applyButton"
 
 const badgeClass =
   "h-6 gap-1.5 rounded-full border-white/10 bg-white/[0.03] px-2.5 text-[11px] font-normal text-white/60"
@@ -152,17 +153,7 @@ export default async function JobDetailsPage({
                   Applications are closed
                 </div>
               ) : (
-                <>
-                  <Link
-                    href="/signin"
-                    className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-lg bg-gradient-to-b from-[#8373ff] to-[#5b4be8] text-sm font-medium text-white shadow-[0_4px_18px_-6px_rgba(109,93,246,0.8)] transition hover:brightness-110"
-                  >
-                    Apply for this role
-                  </Link>
-                  <p className="mt-3 text-center text-[11px] text-white/30">
-                    You&apos;ll be asked to sign in to apply.
-                  </p>
-                </>
+                <ApplyButton jobId={id} jobTitle={job.jobTitle} />
               )}
             </aside>
           </div>

@@ -1,11 +1,14 @@
 'use client';
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { GithubIcon, GoogleIcon } from "@/components/social-icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from 'next/navigation'
 
-export default function SigninPage() {
+function SigninForm() {
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo");
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -17,6 +20,7 @@ export default function SigninPage() {
     const { data, error } = await authClient.signIn.email({
       email: String(formData.get("email") ?? ""),
       password: String(formData.get("password") ?? ""),
+      callbackURL: redirectTo || "/dashboard",
     })
 
     if (error) {
@@ -132,5 +136,13 @@ export default function SigninPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function SigninPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#080811]" />}>
+      <SigninForm />
+    </Suspense>
   );
 }
